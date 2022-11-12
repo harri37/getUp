@@ -1,35 +1,35 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-
 import {SafeAreaView, useColorScheme, Image} from 'react-native';
+
+import Home from './screens/Home';
+import EditAlarm from './screens/EditAlarm';
+import Profile from './screens/Profile';
 
 //replace with our colors later
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Tabs from './components/Tabs';
 
-  const styles = {
-    container: {
-      backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-      flex: 1,
-    },
-  };
+const App = () => {
+  //const isDarkMode = useColorScheme() === 'dark';
+
+  // const styles = {
+  //   container: {
+  //     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  //     flex: 1,
+  //   },
+  // };
+
+  const Stack = createNativeStackNavigator();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image
-        source={require('./assets/hereWeGoAgain.jpg')}
-        style={{height: '50%', width: undefined}}
-      />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Tabs" component={Tabs} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
