@@ -12,6 +12,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Tabs from './components/Tabs';
 
+/**
+ * Sets up navigation and renders the app
+ * @returns render for app
+ */
 const App = () => {
   //const isDarkMode = useColorScheme() === 'dark';
 
