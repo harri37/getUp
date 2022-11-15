@@ -3,6 +3,11 @@ import {useContext, React} from 'react';
 import {colors, sizes} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
 
+/**
+ * Renders a title string with appropriate styles
+ * @param {String} text title text
+ * @returns title render
+ */
 const Title = ({text}) => {
   const {theme} = useContext(AppContext);
 

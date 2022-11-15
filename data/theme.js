@@ -17,4 +17,4 @@ export const colors = {
 export const sizes = {
   header: 40,
 };
-//Should also put fonts and font sizes here
+//Should also put any fonts we use here

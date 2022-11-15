@@ -1,4 +1,4 @@
-import {createContext, useState, React} from 'react';
+import {useState, React} from 'react';
 import {useColorScheme} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -11,13 +11,6 @@ import {AppContext} from './helper/AppContext';
  */
 const App = () => {
   const [theme, setTheme] = useState(useColorScheme());
-
-  // const styles = {
-  //   container: {
-  //     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  //     flex: 1,
-  //   },
-  // };
 
   const Stack = createNativeStackNavigator();
 
