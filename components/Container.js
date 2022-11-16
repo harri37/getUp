@@ -16,7 +16,6 @@ const Container = ({children}) => {
         backgroundColor: colors[theme].bgColor,
         paddingLeft: 20,
         paddingRight: 20,
-        paddingTop: 20,
         height: '100%',
       }}>
       {children}
