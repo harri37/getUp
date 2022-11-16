@@ -46,8 +46,10 @@ const Tabs = () => {
    * @param {Image} icon icon for tab
    * @returns
    */
-  const tabOptions = icon => ({
-    tabBarIcon: ({focused}) => <TabIcon focused={focused} icon={icon} />,
+  const tabOptions = (icon, iconSolid) => ({
+    tabBarIcon: ({focused}) => (
+      <TabIcon focused={focused} icon={focused ? iconSolid : icon} />
+    ),
     tabBarShowLabel: false,
     tabBarStyle: {
       height: height / 12,
@@ -61,17 +63,17 @@ const Tabs = () => {
       <Tab.Screen
         name="Home"
         component={Home}
-        options={() => tabOptions(tabIcons.homeIcon)}
+        options={() => tabOptions(tabIcons.homeIcon, tabIcons.homeIconSolid)}
       />
       <Tab.Screen
         name="EditAlarm"
         component={EditAlarm}
-        options={() => tabOptions(tabIcons.plusIcon)}
+        options={() => tabOptions(tabIcons.plusIcon, tabIcons.plusIconSolid)}
       />
       <Tab.Screen
         name="Profile"
         component={Profile}
-        options={() => tabOptions(tabIcons.userIcon)}
+        options={() => tabOptions(tabIcons.userIcon, tabIcons.userIconSolid)}
       />
     </Tab.Navigator>
   );
