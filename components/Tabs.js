@@ -32,8 +32,8 @@ const Tabs = () => {
           source={icon}
           resizeMode="contain"
           style={{
-            width: 50,
-            height: 50, //This can definitely be done better
+            width: height / 20,
+            height: height / 20, //This can definitely be done better
             tintColor: focused ? colors[theme].bgColor : colors[theme].fgColor, //Colours will change
           }}
         />
@@ -50,7 +50,7 @@ const Tabs = () => {
     tabBarIcon: ({focused}) => <TabIcon focused={focused} icon={icon} />,
     tabBarShowLabel: false,
     tabBarStyle: {
-      height: height / 7,
+      height: height / 12,
       backgroundColor: colors[theme].tabsColor,
     },
   });

@@ -11,33 +11,11 @@ import Title from '../components/Title';
 import Container from '../components/Container';
 import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
+import {testAlarms, userName} from '../data/testData';
 
 const {width, height} = Dimensions.get('window');
 
-//Should be replaced with function that grabs alarms from where ever
-//we choose to store them later on
-const testAlarms = [
-  {
-    id: 1,
-    time: '6:30 AM',
-    set: false,
-  },
-  {
-    id: 2,
-    time: '7:30 AM',
-    set: true,
-  },
-  {
-    id: 3,
-    time: '6:30 AM',
-    set: false,
-  },
-];
-
-//should replace with stored username later
-const userName = 'Harrison';
-
-const Home = () => {
+const Home = ({navigation}) => {
   const {theme} = useContext(AppContext);
   const [alarms, setAlarms] = useState(testAlarms);
 
@@ -95,7 +73,9 @@ const Home = () => {
    */
   const Alarm = ({time, id, set}) => {
     return (
-      <TouchableOpacity style={styles.alarmButton}>
+      <TouchableOpacity
+        style={styles.alarmButton}
+        onPress={() => navigation.navigate('Edit Alarm', {alarmId: id})}>
         <View style={styles.alarmContainer}>
           <View style={styles.itemContainer}>
             <Text style={styles.alarmTime}>{time}</Text>
@@ -126,19 +106,14 @@ const Home = () => {
           <Title
             text={
               (currentTime >= 12
-                ? currentTime > 17
+                ? currentTime >= 17
                   ? 'Good Evening, '
                   : 'Good Afternoon, '
                 : 'Good Morning, ') + userName
             }
           />
           {alarms.map(alarm => (
-            <Alarm
-              id={alarm.id}
-              time={alarm.time}
-              key={alarm.id}
-              set={alarm.set}
-            />
+            <Alarm {...alarm} key={alarm.id} />
           ))}
         </ScrollView>
       }

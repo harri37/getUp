@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Tabs from './components/Tabs';
 import {AppContext} from './helper/AppContext';
+import EditAlarm from './screens/EditAlarm';
 
 /**
  * Sets up navigation and renders the app
@@ -19,6 +20,9 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="Tabs" component={Tabs} />
+          <Stack.Screen name="Edit Alarm">
+            {props => <EditAlarm {...props} />}
+          </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
