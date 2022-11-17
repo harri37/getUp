@@ -3,6 +3,7 @@ import {useColorScheme} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Tabs from './components/Tabs';
+import Settings from './screens/Settings';
 import {AppContext} from './helper/AppContext';
 import EditAlarm from './screens/EditAlarm';
 
@@ -23,6 +24,7 @@ const App = () => {
           <Stack.Screen name="Edit Alarm">
             {props => <EditAlarm {...props} />}
           </Stack.Screen>
+          <Stack.Screen name="Settings" component={Settings} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
