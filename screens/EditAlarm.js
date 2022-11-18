@@ -17,6 +17,8 @@ import {AppContext} from '../helper/AppContext';
 const EditAlarm = ({route}) => {
   const [type, setType] = useState('Select Type');
   const [sound, setSound] = useState('Select Sound');
+  const [showTypes, setShowTypes] = useState(false);
+  const [showSounds, setShowSounds] = useState(false);
   const {theme} = useContext(AppContext);
 
   const options = ['Standard', 'NFC', 'Payment'];
@@ -31,11 +33,11 @@ const EditAlarm = ({route}) => {
    * @param {Array} data array of options to choose from
    * @param {Text} value useState variable to store value
    * @param {Function} setValue setter function for useState value
+   * @param {Boolean} shown state variable for showing dropdown
+   * @param {Function} setShown setter function for shown
    * @returns render for drop down picker
    */
-  const DropdownPicker = ({data, value, setValue}) => {
-    const [shown, setShown] = useState(false);
-
+  const DropdownPicker = ({data, value, setValue, shown, setShown}) => {
     const styles = {
       text: {
         color: colors[theme].bgColor,
@@ -94,8 +96,20 @@ const EditAlarm = ({route}) => {
               typeof alarmId === 'undefined' ? 'Create Alarm' : 'Edit Alarm'
             }
           />
-          <DropdownPicker data={options} value={type} setValue={setType} />
-          <DropdownPicker data={sounds} value={sound} setValue={setSound} />
+          <DropdownPicker
+            data={options}
+            shown={showTypes}
+            setShown={setShowTypes}
+            value={type}
+            setValue={setType}
+          />
+          <DropdownPicker
+            data={sounds}
+            shown={showSounds}
+            setShown={setShowSounds}
+            value={sound}
+            setValue={setSound}
+          />
         </>
       }
     />
