@@ -1,5 +1,5 @@
-import {View, Text, TouchableOpacity} from 'react-native';
-import React, {useState, useContext} from 'react';
+import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
 import Title from '../components/Title';
 import {colors} from '../data/theme';
@@ -12,9 +12,10 @@ import {AppContext} from '../helper/AppContext';
  * fields will be prefilled with existing alarm data.
  *
  * @param {Object} route react navigation route
+ * @param {Object} naviagation app navigation object
  * @returns render for create / edit alarm page
  */
-const EditAlarm = ({route}) => {
+const EditAlarm = ({route, navigation}) => {
   const [type, setType] = useState('Select Type');
   const [sound, setSound] = useState('Select Sound');
   const [showTypes, setShowTypes] = useState(false);
@@ -23,6 +24,17 @@ const EditAlarm = ({route}) => {
 
   const options = ['Standard', 'NFC', 'Payment'];
   const sounds = ['Standard', 'Radio', 'Siren'];
+
+  //Reset field entries when navigating away from screen
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setShowSounds(false);
+      setShowTypes(false);
+      setType('Select Type');
+      setSound('Select Sound');
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   /**
    * Creates a drop down picker component and saves chosen option
@@ -90,7 +102,7 @@ const EditAlarm = ({route}) => {
   return (
     <Container
       children={
-        <>
+        <ScrollView>
           <Title
             text={
               typeof alarmId === 'undefined' ? 'Create Alarm' : 'Edit Alarm'
@@ -110,7 +122,7 @@ const EditAlarm = ({route}) => {
             value={sound}
             setValue={setSound}
           />
-        </>
+        </ScrollView>
       }
     />
   );
