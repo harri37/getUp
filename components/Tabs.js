@@ -34,7 +34,7 @@ const Tabs = () => {
           style={{
             width: height / 20,
             height: height / 20, //This can definitely be done better
-            tintColor: focused ? colors[theme].bgColor : colors[theme].fgColor, //Colours will change
+            tintColor: colors[theme].bgColor, //Colours will change
           }}
         />
       </View>
