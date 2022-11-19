@@ -55,6 +55,7 @@ const Tabs = () => {
     tabBarStyle: {
       height: height / 12,
       backgroundColor: colors[theme].tabsColor,
+      borderTopWidth: 0,
     },
   });
 
@@ -65,7 +66,7 @@ const Tabs = () => {
         tabBarHideOnKeyboard: true,
         tabBarBackground: () => (
           <LinearGradient
-            colors={[colors.blueColorLighter, colors.purpleColorLighter]}
+            colors={[colors.blueColorDarker, colors.purpleColorLighter]}
             style={{height: '100%'}}
           />
         ),
