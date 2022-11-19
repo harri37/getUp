@@ -7,6 +7,7 @@ import {tabIcons} from '../data/icons';
 import {Image, View, Dimensions} from 'react-native';
 import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +35,7 @@ const Tabs = () => {
           style={{
             width: height / 20,
             height: height / 20, //This can definitely be done better
-            tintColor: colors[theme].bgColor, //Colours will change
+            tintColor: colors.blackColorTranslucentLess, //Colours will change
           }}
         />
       </View>
@@ -59,7 +60,16 @@ const Tabs = () => {
 
   return (
     <Tab.Navigator
-      screenOptions={{headerShown: false, tabBarHideOnKeyboard: true}}>
+      screenOptions={{
+        headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarBackground: () => (
+          <LinearGradient
+            colors={[colors.blueColorLighter, colors.purpleColorLighter]}
+            style={{height: '100%'}}
+          />
+        ),
+      }}>
       <Tab.Screen
         name="Home"
         component={Home}
