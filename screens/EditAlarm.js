@@ -4,6 +4,7 @@ import Container from '../components/Container';
 import Title from '../components/Title';
 import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
+import DatePicker from 'react-native-date-picker';
 
 /**
  * Create / edit alarm page. Conditionally renders based on route.
@@ -20,10 +21,30 @@ const EditAlarm = ({route, navigation}) => {
   const [sound, setSound] = useState('Select Sound');
   const [showTypes, setShowTypes] = useState(false);
   const [showSounds, setShowSounds] = useState(false);
+  const [time, setTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [timeSet, setTimeSet] = useState(false);
   const {theme} = useContext(AppContext);
 
   const options = ['Standard', 'NFC', 'Payment'];
   const sounds = ['Standard', 'Radio', 'Siren'];
+
+  const styles = {
+    text: {
+      color: colors[theme].bgColor,
+      paddingTop: 15,
+      paddingBottom: 15,
+    },
+    container: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      marginTop: 10,
+
+      borderRadius: 20,
+      paddingLeft: 20,
+      backgroundColor: colors[theme].fgColor,
+    },
+  };
 
   //Reset field entries when navigating away from screen
   useEffect(() => {
@@ -32,6 +53,8 @@ const EditAlarm = ({route, navigation}) => {
       setShowTypes(false);
       setType('Select Type');
       setSound('Select Sound');
+      setTimeSet(false);
+      setTime(new Date());
     });
     return unsubscribe;
   }, [navigation]);
@@ -50,23 +73,6 @@ const EditAlarm = ({route, navigation}) => {
    * @returns render for drop down picker
    */
   const DropdownPicker = ({data, value, setValue, shown, setShown}) => {
-    const styles = {
-      text: {
-        color: colors[theme].bgColor,
-        paddingTop: 15,
-        paddingBottom: 15,
-      },
-      container: {
-        flexDirection: 'column',
-        justifyContent: 'center',
-        marginTop: 10,
-
-        borderRadius: 20,
-        paddingLeft: 20,
-        backgroundColor: colors[theme].fgColor,
-      },
-    };
-
     /**
      * Creates a single item within drop down list. Clicking
      * on this component will set the passed in state variable to
@@ -107,6 +113,36 @@ const EditAlarm = ({route, navigation}) => {
             text={
               typeof alarmId === 'undefined' ? 'Create Alarm' : 'Edit Alarm'
             }
+          />
+          <TouchableOpacity
+            style={styles.container}
+            onPress={() => {
+              setShowTimePicker(true);
+            }}>
+            <Text style={styles.text}>
+              {timeSet
+                ? `${time.getHours() % 12}:${time.getMinutes()} ${
+                    time.getHours() >= 12 ? 'PM' : 'AM'
+                  }`
+                : 'Select Time'}
+            </Text>
+          </TouchableOpacity>
+          <DatePicker
+            modal
+            title="Select Time"
+            textColor={colors[theme].fgColor}
+            mode="time"
+            display="spinner"
+            date={time}
+            open={showTimePicker}
+            onConfirm={date => {
+              setShowTimePicker(false);
+              setTime(date);
+              setTimeSet(true);
+            }}
+            onCancel={() => {
+              setShowTimePicker(false);
+            }}
           />
           <DropdownPicker
             data={options}
