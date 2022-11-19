@@ -12,8 +12,10 @@ import Container from '../components/Container';
 import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
 import {testAlarms, userName} from '../data/testData';
+import {NativeModules} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
+const {AlarmModule} = NativeModules;
 
 const Home = ({navigation}) => {
   const {theme} = useContext(AppContext);
@@ -56,6 +58,13 @@ const Home = ({navigation}) => {
     //Find alarm object and index in array
     const [toggledAlarm] = alarms.filter(alarm => alarm.id === id);
     const toggledAlarmIndex = alarms.findIndex(alarm => alarm.id === id);
+
+    AlarmModule.createAlarm(
+      'Alarm 34',
+      new Date().getHours(),
+      new Date().getMinutes() + 1,
+      [true, false, true, false, true, true, true],
+    );
 
     //Update alarm state
     setAlarms([
