@@ -7,6 +7,7 @@ import {tabIcons} from '../data/icons';
 import {Image, View, Dimensions} from 'react-native';
 import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +35,7 @@ const Tabs = () => {
           style={{
             width: height / 20,
             height: height / 20, //This can definitely be done better
-            tintColor: focused ? colors[theme].bgColor : colors[theme].fgColor, //Colours will change
+            tintColor: colors.blackColorTranslucentLess, //Colours will change
           }}
         />
       </View>
@@ -46,32 +47,44 @@ const Tabs = () => {
    * @param {Image} icon icon for tab
    * @returns
    */
-  const tabOptions = icon => ({
-    tabBarIcon: ({focused}) => <TabIcon focused={focused} icon={icon} />,
+  const tabOptions = (icon, iconSolid) => ({
+    tabBarIcon: ({focused}) => (
+      <TabIcon focused={focused} icon={focused ? iconSolid : icon} />
+    ),
     tabBarShowLabel: false,
     tabBarStyle: {
       height: height / 12,
       backgroundColor: colors[theme].tabsColor,
+      borderTopWidth: 0,
     },
   });
 
   return (
     <Tab.Navigator
-      screenOptions={{headerShown: false, tabBarHideOnKeyboard: true}}>
+      screenOptions={{
+        headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarBackground: () => (
+          <LinearGradient
+            colors={[colors.blueColorDarker, colors.purpleColorLighter]}
+            style={{height: '100%'}}
+          />
+        ),
+      }}>
       <Tab.Screen
         name="Home"
         component={Home}
-        options={() => tabOptions(tabIcons.homeIcon)}
+        options={() => tabOptions(tabIcons.homeIcon, tabIcons.homeIconSolid)}
       />
       <Tab.Screen
         name="EditAlarm"
         component={EditAlarm}
-        options={() => tabOptions(tabIcons.plusIcon)}
+        options={() => tabOptions(tabIcons.plusIcon, tabIcons.plusIconSolid)}
       />
       <Tab.Screen
         name="Profile"
         component={Profile}
-        options={() => tabOptions(tabIcons.userIcon)}
+        options={() => tabOptions(tabIcons.userIcon, tabIcons.userIconSolid)}
       />
     </Tab.Navigator>
   );
