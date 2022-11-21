@@ -101,6 +101,10 @@ const Home = ({navigation}) => {
       {...toggledAlarm, enabled: !toggledAlarm.enabled},
       ...alarms.slice(toggledAlarmIndex + 1),
     ]);
+    AsyncStorage.setItem(
+      id.toString(),
+      JSON.stringify({...toggledAlarm, enabled: !toggledAlarm.enabled}),
+    );
   };
 
   /**
