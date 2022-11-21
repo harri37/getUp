@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Alarm implements Parcelable {
-    private String name;
+    private int id;
     private boolean[] days;
     private int hours;
     private int mins;
@@ -29,8 +29,8 @@ public class Alarm implements Parcelable {
     private Uri sound;
     private PendingIntent[] pendingIntents;
 
-    public Alarm(String name, boolean[] days, int hours, int mins) {
-        this.name = name;
+    public Alarm(int id, boolean[] days, int hours, int mins) {
+        this.id = id;
         this.days = days;
         this.hours = hours;
         this.mins = mins;
@@ -42,7 +42,7 @@ public class Alarm implements Parcelable {
     }
 
     protected Alarm(Parcel in) {
-        name = in.readString();
+        id = in.readInt();
         days = in.createBooleanArray();
         hours = in.readInt();
         mins = in.readInt();
@@ -116,12 +116,12 @@ public class Alarm implements Parcelable {
         return alarm_date;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean[] getDays() {
@@ -167,7 +167,7 @@ public class Alarm implements Parcelable {
     @Override
     public String toString() {
         return "Alarm{" +
-                "name='" + name + '\'' +
+                "id=" + id +
                 ", time=" + String.format(Locale.ENGLISH, "%02d:%02d", hours, mins) +
                 ", days=" + Arrays.toString(days) +
                 ", enabled=" + enabled +
@@ -181,14 +181,14 @@ public class Alarm implements Parcelable {
         if (o == null || getClass() != o.getClass()) return false;
         Alarm alarm = (Alarm) o;
         return hours == alarm.hours && mins == alarm.mins && enabled == alarm.enabled &&
-                name.equals(alarm.name) && Arrays.equals(days, alarm.days) &&
+                id == alarm.id && Arrays.equals(days, alarm.days) &&
                 Objects.equals(sound, alarm.sound) &&
                 Arrays.equals(pendingIntents, alarm.pendingIntents);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(name, hours, mins, enabled);
+        int result = Objects.hash(id, hours, mins, enabled);
         result = 31 * result + Arrays.hashCode(days);
         return result;
     }
@@ -201,7 +201,7 @@ public class Alarm implements Parcelable {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
+        dest.writeInt(id);
         dest.writeBooleanArray(days);
         dest.writeInt(hours);
         dest.writeInt(mins);

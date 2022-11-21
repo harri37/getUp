@@ -71,20 +71,20 @@ public class AlarmModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void createAlarm(String name, Double h, Double m, ReadableArray d) {
+    public void createAlarm(int id, Double h, Double m, ReadableArray d) {
         int hours = h.intValue();
         int mins = m.intValue();
         boolean[] days = toBoolArray(d);
-        Alarm alarm = new Alarm(name, days, hours, mins);
+        Alarm alarm = new Alarm(id, days, hours, mins);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarm.registerAlarms(context);
         }
         alarmList.add(alarm);
     }
 
-    public Alarm getAlarm(String name) {
+    public Alarm getAlarm(int id) {
         for (Alarm alarm : alarmList) {
-            if (alarm.getName().equals(name)) {
+            if (alarm.getId() == id) {
                 return alarm;
             }
         }
@@ -92,8 +92,8 @@ public class AlarmModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public boolean cancelAlarm(String name) {
-        Alarm alarm = getAlarm(name);
+    public boolean cancelAlarm(int id) {
+        Alarm alarm = getAlarm(id);
         if (alarm == null) return false;
         alarm.cancelAlarms(context);
         return true;

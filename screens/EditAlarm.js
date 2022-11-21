@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView, NativeModules} from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
 import Title from '../components/Title';
@@ -6,6 +6,8 @@ import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
 import DatePicker from 'react-native-date-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const {AlarmModule} = NativeModules;
 
 /**
  * Create / edit alarm page. Conditionally renders based on route.
@@ -94,6 +96,14 @@ const EditAlarm = ({route, navigation}) => {
           enabled: true,
         });
         await AsyncStorage.setItem((oldMaxId + 1).toString(), alarmJSON);
+
+        AlarmModule.createAlarm(
+          oldMaxId + 1,
+          time.getHours(),
+          time.getMinutes(),
+          [false, true, true, true, false, false, false],
+        );
+
         navigation.navigate('Home');
       } catch (e) {
         console.warn(error);

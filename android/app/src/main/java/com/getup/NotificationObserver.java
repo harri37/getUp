@@ -34,7 +34,7 @@ public class NotificationObserver extends BroadcastReceiver {
 
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context, AlarmModule.CHANNEL_ID)
                 .setSmallIcon(R.drawable.redbox_top_border_background)
-                .setContentTitle(alarm.getName())
+                .setContentTitle(String.format("id=%s", alarm.getId()))
                 .setContentText(String.format(Locale.ENGLISH, "%s", alarm.toString()))
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
