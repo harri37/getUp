@@ -60,11 +60,12 @@ const Home = ({navigation}) => {
     const toggledAlarmIndex = alarms.findIndex(alarm => alarm.id === id);
 
     AlarmModule.createAlarm(
-      'Alarm 34',
+      'Alarm 21',
       new Date().getHours(),
       new Date().getMinutes() + 1,
-      [true, false, true, false, true, true, true],
+      [false, true, true, false, false, false, false],
     );
+    // AlarmModule.cancelAlarm('Alarm 21');
 
     //Update alarm state
     setAlarms([
