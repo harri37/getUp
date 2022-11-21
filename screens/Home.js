@@ -6,20 +6,56 @@ import {
   Dimensions,
   Switch,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Title from '../components/Title';
 import Container from '../components/Container';
 import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
-import {testAlarms, userName} from '../data/testData';
-import {NativeModules} from 'react-native';
+import {userName} from '../data/testData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+// import database from '@react-native-firebase/database';
+
+// console.log('fetching data');
+// database()
+//   .ref('/test/')
+//   .on('value', snapshot => {
+//     console.log('data: ', snapshot.val());
+//   });
+// import {NativeModules} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
-const {AlarmModule} = NativeModules;
+//const {AlarmModule} = NativeModules;
 
 const Home = ({navigation}) => {
   const {theme} = useContext(AppContext);
-  const [alarms, setAlarms] = useState(testAlarms);
+  const [alarms, setAlarms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    /**
+     * Grabs existing alarms from async storage
+     * This is run everytime we navigate to the homepage
+     */
+    const getAlarms = async () => {
+      try {
+        const existingKeys = await AsyncStorage.getAllKeys();
+        const existingAlarms = await Promise.all(
+          existingKeys.map(key => AsyncStorage.getItem(key)),
+        );
+        const existingAlarmsJSON = existingAlarms.map(existingAlarm =>
+          JSON.parse(existingAlarm),
+        );
+        setAlarms(existingAlarmsJSON);
+        setLoading(false);
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+
+    getAlarms();
+  }, [isFocused]);
 
   //idk what here is necessary but so long as it works
   const styles = {
@@ -59,17 +95,10 @@ const Home = ({navigation}) => {
     const [toggledAlarm] = alarms.filter(alarm => alarm.id === id);
     const toggledAlarmIndex = alarms.findIndex(alarm => alarm.id === id);
 
-    AlarmModule.createAlarm(
-      'Alarm 34',
-      new Date().getHours(),
-      new Date().getMinutes() + 1,
-      [true, false, true, false, true, true, true],
-    );
-
     //Update alarm state
     setAlarms([
       ...alarms.slice(0, toggledAlarmIndex),
-      {...toggledAlarm, set: !toggledAlarm.set},
+      {...toggledAlarm, enabled: !toggledAlarm.enabled},
       ...alarms.slice(toggledAlarmIndex + 1),
     ]);
   };
@@ -80,19 +109,23 @@ const Home = ({navigation}) => {
    * @param {Number} id alarm id
    * @returns render for alarm display
    */
-  const Alarm = ({time, id, set}) => {
-    return (
+  const Alarm = ({minute, hour, id, enabled}) => {
+    return loading ? (
+      <Text>Loading...</Text>
+    ) : (
       <TouchableOpacity
         style={styles.alarmButton}
         onPress={() => navigation.navigate('Edit Alarm', {alarmId: id})}>
         <View style={styles.alarmContainer}>
           <View style={styles.itemContainer}>
-            <Text style={styles.alarmTime}>{time}</Text>
+            <Text style={styles.alarmTime}>{`${hour % 12}:${
+              minute < 10 ? '0' : ''
+            }${minute} ${hour >= 12 ? 'PM' : 'AM'}`}</Text>
           </View>
           <View style={styles.itemContainer}>
             <Switch
               trackColor={{false: 'red', true: 'green'}}
-              value={set}
+              value={enabled}
               onChange={() => toggleAlarm(id)}
             />
           </View>

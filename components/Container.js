@@ -16,7 +16,7 @@ const Container = ({children}) => {
         backgroundColor: colors[theme].bgColor,
         paddingLeft: 20,
         paddingRight: 20,
-        height: '100%',
+        flex: 1,
       }}>
       {children}
     </SafeAreaView>
