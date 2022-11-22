@@ -28,8 +28,9 @@ const EditAlarm = ({route, navigation}) => {
       ? `2022-22-11T${alarm.hour < 10 ? '0' : ''}${alarm.hour}:${
           alarm.minute < 10 ? '0' : ''
         }${alarm.minute}:00.000Z`
-      : '',
+      : null,
   );
+  console.log(dateObj);
   const timeZoneOffset = dateObj.getTimezoneOffset() * 60000;
   const dateAdjusted = new Date(dateObj.getTime() + timeZoneOffset);
 
@@ -245,6 +246,28 @@ const EditAlarm = ({route, navigation}) => {
           </View>
 
           <View style={{justifyContent: 'flex-end', marginBottom: 20}}>
+            {isExistingAlarm && (
+              <TouchableOpacity
+                onPress={() => deleteAlarm()}
+                style={{
+                  ...styles.container,
+                  paddingLeft: 0,
+                  backgroundColor: colors[theme].bgColor,
+                  borderColor: colors[theme].fgColor,
+                  borderWidth: 3,
+                }}>
+                <Text
+                  style={{
+                    ...styles.text,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: colors[theme].fgColor,
+                  }}>
+                  Delete
+                </Text>
+              </TouchableOpacity>
+            )}
+
             <TouchableOpacity
               onPress={() => (isExistingAlarm ? updateAlarm() : saveAlarm())}
               style={{
