@@ -47,6 +47,7 @@ const Home = ({navigation}) => {
         const existingAlarmsJSON = existingAlarms.map(existingAlarm =>
           JSON.parse(existingAlarm),
         );
+
         setAlarms(existingAlarmsJSON);
         setLoading(false);
       } catch (e) {
@@ -129,7 +130,7 @@ const Home = ({navigation}) => {
             <Switch
               trackColor={{false: 'red', true: 'green'}}
               value={alarm.enabled}
-              onChange={() => toggleAlarm(id)}
+              onChange={() => toggleAlarm(alarm.id)}
             />
           </View>
         </View>
@@ -157,9 +158,13 @@ const Home = ({navigation}) => {
                 : 'Good Morning, ') + userName
             }
           />
-          {alarms.map(alarm => (
-            <Alarm {...alarm} key={alarm.id} />
-          ))}
+          {alarms.length > 0 ? (
+            alarms.map(alarm => <Alarm {...alarm} key={alarm.id} />)
+          ) : (
+            <Text style={{color: colors[theme].fgColor, fontSize: 20}}>
+              Hit the '+' icon to start creating alarms!
+            </Text>
+          )}
         </ScrollView>
       }
     />

@@ -30,7 +30,7 @@ const EditAlarm = ({route, navigation}) => {
         }${alarm.minute}:00.000Z`
       : null,
   );
-  console.log(dateObj);
+
   const timeZoneOffset = dateObj.getTimezoneOffset() * 60000;
   const dateAdjusted = new Date(dateObj.getTime() + timeZoneOffset);
 
@@ -94,9 +94,13 @@ const EditAlarm = ({route, navigation}) => {
       try {
         //Find the old largest alarm id
         const existingKeys = await AsyncStorage.getAllKeys();
-        const maxKey = existingKeys.reduce((max, current) =>
-          parseInt(current) > parseInt(max) ? current : max,
-        );
+        const maxKey =
+          existingKeys.length > 0
+            ? existingKeys.reduce((max, current) =>
+                parseInt(current) > parseInt(max) ? current : max,
+              )
+            : -1;
+        console.log('max key', maxKey);
 
         //Save alarm
         const alarmJSON = JSON.stringify({
@@ -138,6 +142,18 @@ const EditAlarm = ({route, navigation}) => {
           sound: sound,
         }),
       );
+      navigation.navigate('Home');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  /**
+   * Deletes the current alarm from phone storage
+   */
+  const deleteAlarm = async () => {
+    try {
+      await AsyncStorage.removeItem(alarm.id.toString());
       navigation.navigate('Home');
     } catch (e) {
       console.log(e);
