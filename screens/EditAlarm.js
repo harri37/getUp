@@ -95,6 +95,7 @@ const EditAlarm = ({route, navigation}) => {
         setSound('Select Sound');
         setTimeSet(false);
         setTime(new Date());
+        setDaysSelected([false, false, false, false, false, false, false]);
       }
     });
     return unsubscribe;
