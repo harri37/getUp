@@ -1,14 +1,11 @@
-<<<<<<< HEAD
-import {View, Text, TouchableOpacity, ScrollView, NativeModules} from 'react-native';
-=======
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  NativeModules,
 } from 'react-native';
->>>>>>> master
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
 import Title from '../components/Title';
@@ -139,7 +136,7 @@ const EditAlarm = ({route, navigation}) => {
           parseInt(maxKey) + 1,
           time.getHours(),
           time.getMinutes(),
-          [false, true, true, true, false, false, false],
+          daysSelected,
         );
 
         navigation.navigate('Home');
@@ -174,7 +171,7 @@ const EditAlarm = ({route, navigation}) => {
         alarm.id,
         time.getHours(),
         time.getMinutes(),
-        [false, true, true, true, false, false, false],
+        daysSelected,
       );
 
       navigation.navigate('Home');
