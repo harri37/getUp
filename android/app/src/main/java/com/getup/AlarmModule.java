@@ -16,6 +16,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -80,6 +81,7 @@ public class AlarmModule extends ReactContextBaseJavaModule {
             alarm.registerAlarms(context);
         }
         alarmList.add(alarm);
+        Log.d(getName(), "AlarmList: " + Arrays.toString(alarmList.toArray()));
     }
 
     public Alarm getAlarm(int id) {
@@ -92,24 +94,24 @@ public class AlarmModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public boolean updateAlarm(int id, Double h, Double m, ReadableArray d) {
+    public void updateAlarm(int id, Double h, Double m, ReadableArray d) {
         int hours = h.intValue();
         int mins = m.intValue();
         boolean[] days = toBoolArray(d);
         Alarm alarm = getAlarm(id);
-        if (alarm == null) return false;
+        if (alarm == null) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarm.updateAlarms(context, hours, mins, days);
         }
-        return true;
     }
 
     @ReactMethod
-    public boolean cancelAlarm(int id) {
+    public void cancelAlarm(int id) {
         Alarm alarm = getAlarm(id);
-        if (alarm == null) return false;
+        if (alarm == null) return;
         alarm.cancelAlarms(context);
-        return true;
+        alarmList.remove(alarm);
+        Log.d(getName(), "AlarmList: " + Arrays.toString(alarmList.toArray()));
     }
 
     private boolean[] toBoolArray(ReadableArray readableArray) {

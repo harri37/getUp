@@ -120,7 +120,7 @@ const EditAlarm = ({route, navigation}) => {
         );
 
         AlarmModule.createAlarm(
-          oldMaxId + 1,
+          parseInt(maxKey) + 1,
           time.getHours(),
           time.getMinutes(),
           [false, true, true, true, false, false, false],
@@ -152,6 +152,14 @@ const EditAlarm = ({route, navigation}) => {
           sound: sound,
         }),
       );
+
+      AlarmModule.updateAlarm(
+        alarm.id,
+        time.getHours(),
+        time.getMinutes(),
+        [false, true, true, true, false, false, false],
+      );
+
       navigation.navigate('Home');
     } catch (e) {
       console.log(e);
@@ -164,6 +172,9 @@ const EditAlarm = ({route, navigation}) => {
   const deleteAlarm = async () => {
     try {
       await AsyncStorage.removeItem(alarm.id.toString());
+
+      AlarmModule.cancelAlarm(alarm.id);
+
       navigation.navigate('Home');
     } catch (e) {
       console.log(e);
