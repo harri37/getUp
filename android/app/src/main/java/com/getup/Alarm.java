@@ -13,6 +13,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import java.util.Arrays;
@@ -92,6 +93,15 @@ public class Alarm implements Parcelable {
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void updateAlarms(Context context, int hours, int mins, boolean[] days) {
+        cancelAlarms(context);
+        this.hours = hours;
+        this.mins = mins;
+        this.days = days;
+        registerAlarms(context);
+    }
+
     public void cancelAlarms(Context context) {
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         for (int i = 0; i < pendingIntents.length; i++) {
@@ -120,32 +130,16 @@ public class Alarm implements Parcelable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public boolean[] getDays() {
         return days;
-    }
-
-    public void setDays(boolean[] days) {
-        this.days = days;
     }
 
     public int getHours() {
         return hours;
     }
 
-    public void setHours(int hours) {
-        this.hours = hours;
-    }
-
     public int getMins() {
         return mins;
-    }
-
-    public void setMins(int mins) {
-        this.mins = mins;
     }
 
     public boolean isEnabled() {
@@ -153,6 +147,7 @@ public class Alarm implements Parcelable {
     }
 
     public void setEnabled(boolean enabled) {
+        // TODO - enable and disbale alarms
         this.enabled = enabled;
     }
 
@@ -161,9 +156,11 @@ public class Alarm implements Parcelable {
     }
 
     public void setSound(Uri sound) {
+        // TODO - change notification sound
         this.sound = sound;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Alarm{" +

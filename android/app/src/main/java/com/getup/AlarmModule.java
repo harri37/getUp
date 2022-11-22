@@ -92,6 +92,19 @@ public class AlarmModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public boolean updateAlarm(int id, Double h, Double m, ReadableArray d) {
+        int hours = h.intValue();
+        int mins = m.intValue();
+        boolean[] days = toBoolArray(d);
+        Alarm alarm = getAlarm(id);
+        if (alarm == null) return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarm.updateAlarms(context, hours, mins, days);
+        }
+        return true;
+    }
+
+    @ReactMethod
     public boolean cancelAlarm(int id) {
         Alarm alarm = getAlarm(id);
         if (alarm == null) return false;
