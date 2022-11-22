@@ -123,7 +123,7 @@ const EditAlarm = ({route, navigation}) => {
           parseInt(maxKey) + 1,
           time.getHours(),
           time.getMinutes(),
-          [false, true, true, true, false, false, false],
+          [false, false, false, false, false, false, false],
         );
 
         navigation.navigate('Home');
@@ -157,7 +157,7 @@ const EditAlarm = ({route, navigation}) => {
         alarm.id,
         time.getHours(),
         time.getMinutes(),
-        [false, true, true, true, false, false, false],
+        [false, false, false, false, false, false, false],
       );
 
       navigation.navigate('Home');

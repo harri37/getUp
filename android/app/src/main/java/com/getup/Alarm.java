@@ -67,9 +67,29 @@ public class Alarm implements Parcelable {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void registerAlarms(Context context) {
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        int numDays = 0;
         for (int i = 1; i <= 7; i++) {
-            if (days[i-1]) registerAlarm(context, am, i);
+            if (days[i-1]) {
+                registerAlarm(context, am, i);
+                numDays++;
+            }
         }
+        if (numDays == 0) {
+            int day = getImmediateDay();
+            registerAlarm(context, am, day);
+        }
+    }
+
+    private int getImmediateDay() {
+        Calendar alarm_date = Calendar.getInstance();
+        alarm_date.set(Calendar.HOUR_OF_DAY, hours);
+        alarm_date.set(Calendar.MINUTE, mins);
+        alarm_date.set(Calendar.SECOND, 0);
+        alarm_date.set(Calendar.MILLISECOND, 0);
+        if (alarm_date.before(Calendar.getInstance())) {
+            alarm_date.add(Calendar.DAY_OF_WEEK, 1);
+        }
+        return alarm_date.get(Calendar.DAY_OF_WEEK);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
