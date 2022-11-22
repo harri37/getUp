@@ -47,6 +47,7 @@ const Home = ({navigation}) => {
         const existingAlarmsJSON = existingAlarms.map(existingAlarm =>
           JSON.parse(existingAlarm),
         );
+
         setAlarms(existingAlarmsJSON);
         setLoading(false);
       } catch (e) {
@@ -60,7 +61,7 @@ const Home = ({navigation}) => {
   //idk what here is necessary but so long as it works
   const styles = {
     alarmButton: {
-      marginTop: 10,
+      marginBottom: 10,
       borderRadius: 20,
       height: height / 8,
       flex: 1,
@@ -109,28 +110,27 @@ const Home = ({navigation}) => {
 
   /**
    * Renders display for single alarm on home page
-   * @param {String} time time of alarm
-   * @param {Number} id alarm id
+   * @param {JSON} alarm alarm object
    * @returns render for alarm display
    */
-  const Alarm = ({minute, hour, id, enabled}) => {
+  const Alarm = alarm => {
     return loading ? (
       <Text>Loading...</Text>
     ) : (
       <TouchableOpacity
         style={styles.alarmButton}
-        onPress={() => navigation.navigate('Edit Alarm', {alarmId: id})}>
+        onPress={() => navigation.navigate('Edit Alarm', {...alarm})}>
         <View style={styles.alarmContainer}>
           <View style={styles.itemContainer}>
-            <Text style={styles.alarmTime}>{`${hour % 12}:${
-              minute < 10 ? '0' : ''
-            }${minute} ${hour >= 12 ? 'PM' : 'AM'}`}</Text>
+            <Text style={styles.alarmTime}>{`${alarm.hour % 12}:${
+              alarm.minute < 10 ? '0' : ''
+            }${alarm.minute} ${alarm.hour >= 12 ? 'PM' : 'AM'}`}</Text>
           </View>
           <View style={styles.itemContainer}>
             <Switch
               trackColor={{false: 'red', true: 'green'}}
-              value={enabled}
-              onChange={() => toggleAlarm(id)}
+              value={alarm.enabled}
+              onChange={() => toggleAlarm(alarm.id)}
             />
           </View>
         </View>
@@ -158,9 +158,13 @@ const Home = ({navigation}) => {
                 : 'Good Morning, ') + userName
             }
           />
-          {alarms.map(alarm => (
-            <Alarm {...alarm} key={alarm.id} />
-          ))}
+          {alarms.length > 0 ? (
+            alarms.map(alarm => <Alarm {...alarm} key={alarm.id} />)
+          ) : (
+            <Text style={{color: colors[theme].fgColor, fontSize: 20}}>
+              Hit the '+' icon to start creating alarms!
+            </Text>
+          )}
         </ScrollView>
       }
     />

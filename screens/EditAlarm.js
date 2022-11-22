@@ -18,11 +18,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * @returns render for create / edit alarm page
  */
 const EditAlarm = ({route, navigation}) => {
-  const [type, setType] = useState('Select Type');
-  const [sound, setSound] = useState('Select Sound');
+  //Check if we have come from an existing alarm
+  const alarm = typeof route.params === 'undefined' ? '' : route.params;
+  const isExistingAlarm = alarm !== '';
+
+  //Initialise date object to save time with correct timezone offset
+  const dateObj = new Date(
+    isExistingAlarm
+      ? `2022-22-11T${alarm.hour < 10 ? '0' : ''}${alarm.hour}:${
+          alarm.minute < 10 ? '0' : ''
+        }${alarm.minute}:00.000Z`
+      : null,
+  );
+
+  const timeZoneOffset = dateObj.getTimezoneOffset() * 60000;
+  const dateAdjusted = new Date(dateObj.getTime() + timeZoneOffset);
+
+  //Setup state variable with existing values if we are editing or default
+  //values if we are creating a new alarm
+  const [type, setType] = useState(
+    isExistingAlarm ? alarm.type : 'Select Type',
+  );
+  const [sound, setSound] = useState(
+    isExistingAlarm ? alarm.sound : 'Select Sound',
+  );
   const [showTypes, setShowTypes] = useState(false);
   const [showSounds, setShowSounds] = useState(false);
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(dateAdjusted);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [timeSet, setTimeSet] = useState(false);
   const {theme} = useContext(AppContext);
@@ -30,6 +52,7 @@ const EditAlarm = ({route, navigation}) => {
   const options = ['Standard', 'NFC', 'Payment'];
   const sounds = ['Standard', 'Radio', 'Siren'];
 
+  //basic styling
   const styles = {
     text: {
       color: colors[theme].bgColor,
@@ -50,12 +73,14 @@ const EditAlarm = ({route, navigation}) => {
   //Reset field entries when navigating away from screen
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setShowSounds(false);
-      setShowTypes(false);
-      setType('Select Type');
-      setSound('Select Sound');
-      setTimeSet(false);
-      setTime(new Date());
+      if (!isExistingAlarm) {
+        setShowSounds(false);
+        setShowTypes(false);
+        setType('Select Type');
+        setSound('Select Sound');
+        setTimeSet(false);
+        setTime(new Date());
+      }
     });
     return unsubscribe;
   }, [navigation]);
@@ -65,35 +90,32 @@ const EditAlarm = ({route, navigation}) => {
    * Will not attempt to save an alarm if not all fields are filled in
    */
   const saveAlarm = async () => {
-    console.log('saving alarm');
     if (type !== 'Select Type' && sound !== 'Select Sound' && timeSet) {
       try {
         //Find the old largest alarm id
         const existingKeys = await AsyncStorage.getAllKeys();
-        const existingAlarms = await Promise.all(
-          existingKeys.map(key => AsyncStorage.getItem(key)),
-        );
-        const existingAlarmsJSON = existingAlarms.map(existingAlarm =>
-          JSON.parse(existingAlarm),
-        );
-        const oldMaxId =
-          existingAlarmsJSON.length > 0
-            ? existingAlarmsJSON.reduce((max, current) =>
-                max.id > current.id ? max : current,
-              ).id
-            : 0;
+        const maxKey =
+          existingKeys.length > 0
+            ? existingKeys.reduce((max, current) =>
+                parseInt(current) > parseInt(max) ? current : max,
+              )
+            : -1;
+        console.log('max key', maxKey);
 
         //Save alarm
         const alarmJSON = JSON.stringify({
           type: type,
           sound: sound,
-          id: oldMaxId + 1,
+          id: parseInt(maxKey) + 1,
           hour: time.getHours(),
           minute: time.getMinutes(),
           days: [false, false, false, false, false, false, false],
           enabled: true,
         });
-        await AsyncStorage.setItem((oldMaxId + 1).toString(), alarmJSON);
+        await AsyncStorage.setItem(
+          (parseInt(maxKey) + 1).toString(),
+          alarmJSON,
+        );
         navigation.navigate('Home');
       } catch (e) {
         console.warn(error);
@@ -101,6 +123,40 @@ const EditAlarm = ({route, navigation}) => {
     } else {
       //shaking animations ideally
       console.log('please fill in all fields');
+    }
+  };
+
+  /**
+   * Update settings for previously saved alarm
+   * and return to home page
+   */
+  const updateAlarm = async () => {
+    try {
+      await AsyncStorage.setItem(
+        alarm.id.toString(),
+        JSON.stringify({
+          ...alarm,
+          type: type,
+          hour: time.getHours(),
+          minute: time.getMinutes(),
+          sound: sound,
+        }),
+      );
+      navigation.navigate('Home');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  /**
+   * Deletes the current alarm from phone storage
+   */
+  const deleteAlarm = async () => {
+    try {
+      await AsyncStorage.removeItem(alarm.id.toString());
+      navigation.navigate('Home');
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -147,9 +203,6 @@ const EditAlarm = ({route, navigation}) => {
     );
   };
 
-  //Check if we have come from an existing alarm
-  const {alarmId} = typeof route.params === 'undefined' ? '' : route.params;
-
   return (
     <Container
       children={
@@ -160,18 +213,14 @@ const EditAlarm = ({route, navigation}) => {
             flexDirection: 'column',
           }}>
           <View style={{justifyContent: 'flex-start'}}>
-            <Title
-              text={
-                typeof alarmId === 'undefined' ? 'Create Alarm' : 'Edit Alarm'
-              }
-            />
+            <Title text={isExistingAlarm ? 'Edit Alarm' : 'Create Alarm'} />
             <TouchableOpacity
               style={styles.container}
               onPress={() => {
                 setShowTimePicker(true);
               }}>
               <Text style={styles.text}>
-                {timeSet
+                {timeSet || isExistingAlarm
                   ? `${time.getHours() % 12}:${
                       time.getMinutes() < 10 ? '0' : ''
                     }${time.getMinutes()} ${
@@ -213,8 +262,30 @@ const EditAlarm = ({route, navigation}) => {
           </View>
 
           <View style={{justifyContent: 'flex-end', marginBottom: 20}}>
+            {isExistingAlarm && (
+              <TouchableOpacity
+                onPress={() => deleteAlarm()}
+                style={{
+                  ...styles.container,
+                  paddingLeft: 0,
+                  backgroundColor: colors[theme].bgColor,
+                  borderColor: colors[theme].fgColor,
+                  borderWidth: 3,
+                }}>
+                <Text
+                  style={{
+                    ...styles.text,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: colors[theme].fgColor,
+                  }}>
+                  Delete
+                </Text>
+              </TouchableOpacity>
+            )}
+
             <TouchableOpacity
-              onPress={() => saveAlarm()}
+              onPress={() => (isExistingAlarm ? updateAlarm() : saveAlarm())}
               style={{
                 ...styles.container,
                 paddingLeft: 0,
