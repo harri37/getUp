@@ -1,14 +1,11 @@
-<<<<<<< HEAD
-import {View, Text, TouchableOpacity, ScrollView, NativeModules} from 'react-native';
-=======
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  NativeModules,
 } from 'react-native';
->>>>>>> master
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
 import Title from '../components/Title';
