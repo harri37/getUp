@@ -14,6 +14,8 @@ import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
 import DatePicker from 'react-native-date-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import chevronIcon from '../assets/icons/chevron-down-black.png';
+import crossIcon from '../assets/icons/cross-black.png';
 
 const {AlarmModule} = NativeModules;
 
@@ -231,10 +233,7 @@ const EditAlarm = ({route, navigation}) => {
             setValue(value);
             setShown(false);
           }}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.text}>{value}</Text>
-            {/*chevron / x here */}
-          </View>
+          <Text style={styles.text}>{value}</Text>
         </TouchableOpacity>
       );
     };
@@ -243,7 +242,25 @@ const EditAlarm = ({route, navigation}) => {
       <TouchableOpacity
         style={styles.container}
         onPress={() => setShown(!shown)}>
-        <Text style={{...styles.text, fontWeight: 'bold'}}>{value}</Text>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={{...styles.text, fontWeight: 'bold', flex: 1}}>
+            {value}
+          </Text>
+          <View
+            style={{
+              alignSelf: 'flex-end',
+              width: 20,
+              height: 20,
+              marginBottom: 15,
+              marginRight: 20,
+            }}>
+            <Image
+              source={shown ? crossIcon : chevronIcon}
+              style={{width: '100%', height: '100%'}}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
         {shown &&
           data.map((item, index) => (
             <DropdownItem
