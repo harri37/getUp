@@ -86,7 +86,10 @@ public class Alarm implements Parcelable {
         alarm_date.set(Calendar.MINUTE, mins);
         alarm_date.set(Calendar.SECOND, 0);
         alarm_date.set(Calendar.MILLISECOND, 0);
-        if (alarm_date.before(Calendar.getInstance())) {
+        Calendar current = Calendar.getInstance();
+        current.set(Calendar.SECOND, 0);
+        current.set(Calendar.MILLISECOND, 0);
+        if (current.after(alarm_date)) {
             alarm_date.add(Calendar.DAY_OF_WEEK, 1);
         }
         return alarm_date.get(Calendar.DAY_OF_WEEK);
@@ -94,7 +97,7 @@ public class Alarm implements Parcelable {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void registerAlarm(Context context, AlarmManager am, int day) {
-        Intent intent = new Intent(context, NotificationObserver.class);
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("alarm", this);
 
@@ -140,7 +143,10 @@ public class Alarm implements Parcelable {
         alarm_date.set(Calendar.MINUTE, mins);
         alarm_date.set(Calendar.SECOND, 0);
         alarm_date.set(Calendar.MILLISECOND, 0);
-        if (alarm_date.before(Calendar.getInstance())) {
+        Calendar current = Calendar.getInstance();
+        current.set(Calendar.SECOND, 0);
+        current.set(Calendar.MILLISECOND, 0);
+        if (current.after(alarm_date)) {
             alarm_date.add(Calendar.WEEK_OF_YEAR, 1);
         }
         return alarm_date;
