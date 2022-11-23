@@ -14,8 +14,7 @@ import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
 import DatePicker from 'react-native-date-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import chevronIcon from '../assets/icons/chevron-down-black.png';
-import crossIcon from '../assets/icons/cross-black.png';
+import {dropdownIcons} from '../data/icons';
 
 const {AlarmModule} = NativeModules;
 
@@ -255,7 +254,11 @@ const EditAlarm = ({route, navigation}) => {
               marginRight: 20,
             }}>
             <Image
-              source={shown ? crossIcon : chevronIcon}
+              source={
+                shown
+                  ? dropdownIcons[theme].crossIcon
+                  : dropdownIcons[theme].chevronIcon
+              }
               style={{width: '100%', height: '100%'}}
               resizeMode="contain"
             />

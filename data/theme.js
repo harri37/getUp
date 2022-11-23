@@ -7,7 +7,7 @@ export const colors = {
   light: {
     bgColor: '#ffffff',
     fgColor: '#800080',
-    fgColorLighter: 'rgba(128,0,128,0.5)',
+    fgColorLighter: '#cc34eb',
     headerTextColor: '#ffffff',
   },
   dark: {
