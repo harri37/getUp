@@ -5,6 +5,8 @@ import {
   ScrollView,
   Dimensions,
   NativeModules,
+  Image,
+  Animated,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
@@ -13,6 +15,7 @@ import {colors} from '../data/theme';
 import {AppContext} from '../helper/AppContext';
 import DatePicker from 'react-native-date-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {dropdownIcons} from '../data/icons';
 
 const {AlarmModule} = NativeModules;
 
@@ -67,20 +70,54 @@ const EditAlarm = ({route, navigation}) => {
   const options = ['Standard', 'NFC', 'Payment'];
   const sounds = ['Standard', 'Radio', 'Siren'];
 
+  //Animations for inputs
+  const timeShakeAnimation = new Animated.Value(0);
+  const typeShakeAnimation = new Animated.Value(0);
+  const soundShakeAnimation = new Animated.Value(0);
+
+  const animations = [typeShakeAnimation, soundShakeAnimation]; //time is a special case
+
+  /**
+   * Function to start shake animation
+   */
+  const startShake = animation => {
+    Animated.sequence([
+      Animated.timing(animation, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animation, {
+        toValue: -10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animation, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
   //basic styling
   const styles = {
     text: {
       color: colors[theme].bgColor,
       paddingTop: 15,
       paddingBottom: 15,
+      marginLeft: 20,
     },
     container: {
       flexDirection: 'column',
       justifyContent: 'center',
       marginTop: 10,
-
       borderRadius: 20,
-      paddingLeft: 20,
       backgroundColor: colors[theme].fgColor,
     },
   };
@@ -95,6 +132,7 @@ const EditAlarm = ({route, navigation}) => {
         setSound('Select Sound');
         setTimeSet(false);
         setTime(new Date());
+        setDaysSelected([false, false, false, false, false, false, false]);
       }
     });
     return unsubscribe;
@@ -136,7 +174,7 @@ const EditAlarm = ({route, navigation}) => {
           parseInt(maxKey) + 1,
           time.getHours(),
           time.getMinutes(),
-          [false, false, false, false, false, false, false],
+          daysSelected,
         );
 
         navigation.navigate('Home');
@@ -144,8 +182,15 @@ const EditAlarm = ({route, navigation}) => {
         console.warn(error);
       }
     } else {
-      //shaking animations ideally
-      console.log('please fill in all fields');
+      //Shake animation on empty fields
+      const inputs = [type, sound];
+      const notSetValues = ['Select Type', 'Select Sound'];
+      if (!timeSet) {
+        startShake(timeShakeAnimation);
+      }
+      inputs.map((input, index) =>
+        input === notSetValues[index] ? startShake(animations[index]) : null,
+      );
     }
   };
 
@@ -171,7 +216,7 @@ const EditAlarm = ({route, navigation}) => {
         alarm.id,
         time.getHours(),
         time.getMinutes(),
-        [false, false, false, false, false, false, false],
+        daysSelected,
       );
 
       navigation.navigate('Home');
@@ -217,9 +262,15 @@ const EditAlarm = ({route, navigation}) => {
      * @param {Text} value value of dropdown item
      * @returns render for a drop down item
      */
-    const DropdownItem = ({value}) => {
+    const DropdownItem = ({value, index, selected}) => {
       return (
         <TouchableOpacity
+          style={{
+            backgroundColor:
+              value === selected ? colors[theme].fgColorLighter : null,
+            borderBottomLeftRadius: index === data.length - 1 ? 20 : 0,
+            borderBottomRightRadius: index === data.length - 1 ? 20 : 0,
+          }}
           onPress={() => {
             setValue(value);
             setShown(false);
@@ -233,8 +284,38 @@ const EditAlarm = ({route, navigation}) => {
       <TouchableOpacity
         style={styles.container}
         onPress={() => setShown(!shown)}>
-        <Text style={styles.text}>{value}</Text>
-        {shown && data.map(item => <DropdownItem value={item} key={item} />)}
+        <View style={{flexDirection: 'row'}}>
+          <Text style={{...styles.text, fontWeight: 'bold', flex: 1}}>
+            {value}
+          </Text>
+          <View
+            style={{
+              alignSelf: 'flex-end',
+              width: 20,
+              height: 20,
+              marginBottom: 15,
+              marginRight: 20,
+            }}>
+            <Image
+              source={
+                shown
+                  ? dropdownIcons[theme].crossIcon
+                  : dropdownIcons[theme].chevronIcon
+              }
+              style={{width: '100%', height: '100%'}}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+        {shown &&
+          data.map((item, index) => (
+            <DropdownItem
+              index={index}
+              selected={value}
+              value={item}
+              key={item}
+            />
+          ))}
       </TouchableOpacity>
     );
   };
@@ -311,21 +392,24 @@ const EditAlarm = ({route, navigation}) => {
           }}>
           <View style={{justifyContent: 'flex-start'}}>
             <Title text={isExistingAlarm ? 'Edit Alarm' : 'Create Alarm'} />
-            <TouchableOpacity
-              style={styles.container}
-              onPress={() => {
-                setShowTimePicker(true);
-              }}>
-              <Text style={styles.text}>
-                {timeSet || isExistingAlarm
-                  ? `${time.getHours() % 12}:${
-                      time.getMinutes() < 10 ? '0' : ''
-                    }${time.getMinutes()} ${
-                      time.getHours() >= 12 ? 'PM' : 'AM'
-                    }`
-                  : 'Select Time'}
-              </Text>
-            </TouchableOpacity>
+            <Animated.View
+              style={{transform: [{translateY: timeShakeAnimation}]}}>
+              <TouchableOpacity
+                style={styles.container}
+                onPress={() => {
+                  setShowTimePicker(true);
+                }}>
+                <Text style={{...styles.text, fontWeight: 'bold'}}>
+                  {timeSet || isExistingAlarm
+                    ? `${time.getHours() % 12}:${
+                        time.getMinutes() < 10 ? '0' : ''
+                      }${time.getMinutes()} ${
+                        time.getHours() >= 12 ? 'PM' : 'AM'
+                      }`
+                    : 'Select Time'}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
             <DatePicker
               modal
               title="Select Time"
@@ -342,20 +426,26 @@ const EditAlarm = ({route, navigation}) => {
                 setShowTimePicker(false);
               }}
             />
-            <DropdownPicker
-              data={options}
-              shown={showTypes}
-              setShown={setShowTypes}
-              value={type}
-              setValue={setType}
-            />
-            <DropdownPicker
-              data={sounds}
-              shown={showSounds}
-              setShown={setShowSounds}
-              value={sound}
-              setValue={setSound}
-            />
+            <Animated.View
+              style={{transform: [{translateY: typeShakeAnimation}]}}>
+              <DropdownPicker
+                data={options}
+                shown={showTypes}
+                setShown={setShowTypes}
+                value={type}
+                setValue={setType}
+              />
+            </Animated.View>
+            <Animated.View
+              style={{transform: [{translateY: soundShakeAnimation}]}}>
+              <DropdownPicker
+                data={sounds}
+                shown={showSounds}
+                setShown={setShowSounds}
+                value={sound}
+                setValue={setSound}
+              />
+            </Animated.View>
             <DaySelect />
           </View>
 
@@ -369,16 +459,25 @@ const EditAlarm = ({route, navigation}) => {
                   backgroundColor: colors[theme].bgColor,
                   borderColor: colors[theme].fgColor,
                   borderWidth: 3,
+                  flexDirection: 'row',
+                  flex: 1,
                 }}>
-                <Text
+                <View
                   style={{
-                    ...styles.text,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    color: colors[theme].fgColor,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  Delete
-                </Text>
+                  <Text
+                    style={{
+                      paddingTop: 15,
+                      paddingBottom: 15,
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      color: colors[theme].fgColor,
+                    }}>
+                    Delete
+                  </Text>
+                </View>
               </TouchableOpacity>
             )}
 
@@ -386,16 +485,25 @@ const EditAlarm = ({route, navigation}) => {
               onPress={() => (isExistingAlarm ? updateAlarm() : saveAlarm())}
               style={{
                 ...styles.container,
-                paddingLeft: 0,
+                flexDirection: 'row',
+                flex: 1,
               }}>
-              <Text
+              <View
                 style={{
-                  ...styles.text,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                Save
-              </Text>
+                <Text
+                  style={{
+                    color: colors[theme].bgColor,
+                    paddingTop: 15,
+                    paddingBottom: 15,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}>
+                  Save
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </ScrollView>
