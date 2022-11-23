@@ -407,16 +407,25 @@ const EditAlarm = ({route, navigation}) => {
                   backgroundColor: colors[theme].bgColor,
                   borderColor: colors[theme].fgColor,
                   borderWidth: 3,
+                  flexDirection: 'row',
+                  flex: 1,
                 }}>
-                <Text
+                <View
                   style={{
-                    ...styles.text,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    color: colors[theme].fgColor,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  Delete
-                </Text>
+                  <Text
+                    style={{
+                      paddingTop: 15,
+                      paddingBottom: 15,
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      color: colors[theme].fgColor,
+                    }}>
+                    Delete
+                  </Text>
+                </View>
               </TouchableOpacity>
             )}
 
@@ -424,16 +433,25 @@ const EditAlarm = ({route, navigation}) => {
               onPress={() => (isExistingAlarm ? updateAlarm() : saveAlarm())}
               style={{
                 ...styles.container,
-                paddingLeft: 0,
+                flexDirection: 'row',
+                flex: 1,
               }}>
-              <Text
+              <View
                 style={{
-                  ...styles.text,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                Save
-              </Text>
+                <Text
+                  style={{
+                    color: colors[theme].bgColor,
+                    paddingTop: 15,
+                    paddingBottom: 15,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}>
+                  Save
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </ScrollView>
