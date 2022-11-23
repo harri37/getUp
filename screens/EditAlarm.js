@@ -6,6 +6,7 @@ import {
   Dimensions,
   NativeModules,
   Image,
+  Animated,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
@@ -68,6 +69,41 @@ const EditAlarm = ({route, navigation}) => {
 
   const options = ['Standard', 'NFC', 'Payment'];
   const sounds = ['Standard', 'Radio', 'Siren'];
+
+  //Animations for inputs
+  const timeShakeAnimation = new Animated.Value(0);
+  const typeShakeAnimation = new Animated.Value(0);
+  const soundShakeAnimation = new Animated.Value(0);
+
+  const animations = [typeShakeAnimation, soundShakeAnimation]; //time is a special case
+
+  /**
+   * Function to start shake animation
+   */
+  const startShake = animation => {
+    Animated.sequence([
+      Animated.timing(animation, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animation, {
+        toValue: -10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animation, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   //basic styling
   const styles = {
@@ -146,8 +182,15 @@ const EditAlarm = ({route, navigation}) => {
         console.warn(error);
       }
     } else {
-      //shaking animations ideally
-      console.log('please fill in all fields');
+      //Shake animation on empty fields
+      const inputs = [type, sound];
+      const notSetValues = ['Select Type', 'Select Sound'];
+      if (!timeSet) {
+        startShake(timeShakeAnimation);
+      }
+      inputs.map((input, index) =>
+        input === notSetValues[index] ? startShake(animations[index]) : null,
+      );
     }
   };
 
@@ -349,21 +392,24 @@ const EditAlarm = ({route, navigation}) => {
           }}>
           <View style={{justifyContent: 'flex-start'}}>
             <Title text={isExistingAlarm ? 'Edit Alarm' : 'Create Alarm'} />
-            <TouchableOpacity
-              style={styles.container}
-              onPress={() => {
-                setShowTimePicker(true);
-              }}>
-              <Text style={{...styles.text, fontWeight: 'bold'}}>
-                {timeSet || isExistingAlarm
-                  ? `${time.getHours() % 12}:${
-                      time.getMinutes() < 10 ? '0' : ''
-                    }${time.getMinutes()} ${
-                      time.getHours() >= 12 ? 'PM' : 'AM'
-                    }`
-                  : 'Select Time'}
-              </Text>
-            </TouchableOpacity>
+            <Animated.View
+              style={{transform: [{translateY: timeShakeAnimation}]}}>
+              <TouchableOpacity
+                style={styles.container}
+                onPress={() => {
+                  setShowTimePicker(true);
+                }}>
+                <Text style={{...styles.text, fontWeight: 'bold'}}>
+                  {timeSet || isExistingAlarm
+                    ? `${time.getHours() % 12}:${
+                        time.getMinutes() < 10 ? '0' : ''
+                      }${time.getMinutes()} ${
+                        time.getHours() >= 12 ? 'PM' : 'AM'
+                      }`
+                    : 'Select Time'}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
             <DatePicker
               modal
               title="Select Time"
@@ -380,20 +426,26 @@ const EditAlarm = ({route, navigation}) => {
                 setShowTimePicker(false);
               }}
             />
-            <DropdownPicker
-              data={options}
-              shown={showTypes}
-              setShown={setShowTypes}
-              value={type}
-              setValue={setType}
-            />
-            <DropdownPicker
-              data={sounds}
-              shown={showSounds}
-              setShown={setShowSounds}
-              value={sound}
-              setValue={setSound}
-            />
+            <Animated.View
+              style={{transform: [{translateY: typeShakeAnimation}]}}>
+              <DropdownPicker
+                data={options}
+                shown={showTypes}
+                setShown={setShowTypes}
+                value={type}
+                setValue={setType}
+              />
+            </Animated.View>
+            <Animated.View
+              style={{transform: [{translateY: soundShakeAnimation}]}}>
+              <DropdownPicker
+                data={sounds}
+                shown={showSounds}
+                setShown={setShowSounds}
+                value={sound}
+                setValue={setSound}
+              />
+            </Animated.View>
             <DaySelect />
           </View>
 
