@@ -5,6 +5,7 @@ import {
   ScrollView,
   Dimensions,
   NativeModules,
+  Image,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
@@ -73,14 +74,13 @@ const EditAlarm = ({route, navigation}) => {
       color: colors[theme].bgColor,
       paddingTop: 15,
       paddingBottom: 15,
+      marginLeft: 20,
     },
     container: {
       flexDirection: 'column',
       justifyContent: 'center',
       marginTop: 10,
-
       borderRadius: 20,
-      paddingLeft: 20,
       backgroundColor: colors[theme].fgColor,
     },
   };
@@ -218,14 +218,23 @@ const EditAlarm = ({route, navigation}) => {
      * @param {Text} value value of dropdown item
      * @returns render for a drop down item
      */
-    const DropdownItem = ({value}) => {
+    const DropdownItem = ({value, index, selected}) => {
       return (
         <TouchableOpacity
+          style={{
+            backgroundColor:
+              value === selected ? colors[theme].fgColorLighter : null,
+            borderBottomLeftRadius: index === data.length - 1 ? 20 : 0,
+            borderBottomRightRadius: index === data.length - 1 ? 20 : 0,
+          }}
           onPress={() => {
             setValue(value);
             setShown(false);
           }}>
-          <Text style={styles.text}>{value}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.text}>{value}</Text>
+            {/*chevron / x here */}
+          </View>
         </TouchableOpacity>
       );
     };
@@ -234,8 +243,16 @@ const EditAlarm = ({route, navigation}) => {
       <TouchableOpacity
         style={styles.container}
         onPress={() => setShown(!shown)}>
-        <Text style={styles.text}>{value}</Text>
-        {shown && data.map(item => <DropdownItem value={item} key={item} />)}
+        <Text style={{...styles.text, fontWeight: 'bold'}}>{value}</Text>
+        {shown &&
+          data.map((item, index) => (
+            <DropdownItem
+              index={index}
+              selected={value}
+              value={item}
+              key={item}
+            />
+          ))}
       </TouchableOpacity>
     );
   };
@@ -317,7 +334,7 @@ const EditAlarm = ({route, navigation}) => {
               onPress={() => {
                 setShowTimePicker(true);
               }}>
-              <Text style={styles.text}>
+              <Text style={{...styles.text, fontWeight: 'bold'}}>
                 {timeSet || isExistingAlarm
                   ? `${time.getHours() % 12}:${
                       time.getMinutes() < 10 ? '0' : ''
