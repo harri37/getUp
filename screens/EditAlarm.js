@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 import {View, Text, TouchableOpacity, ScrollView, NativeModules} from 'react-native';
+=======
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
+>>>>>>> master
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
 import Title from '../components/Title';
@@ -49,7 +59,13 @@ const EditAlarm = ({route, navigation}) => {
   const [time, setTime] = useState(dateAdjusted);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [timeSet, setTimeSet] = useState(false);
+  const [daysSelected, setDaysSelected] = useState(
+    isExistingAlarm
+      ? alarm.days
+      : [false, false, false, false, false, false, false],
+  );
   const {theme} = useContext(AppContext);
+  const {width, height} = Dimensions.get('window');
 
   const options = ['Standard', 'NFC', 'Payment'];
   const sounds = ['Standard', 'Radio', 'Siren'];
@@ -111,7 +127,7 @@ const EditAlarm = ({route, navigation}) => {
           id: parseInt(maxKey) + 1,
           hour: time.getHours(),
           minute: time.getMinutes(),
-          days: [false, false, false, false, false, false, false],
+          days: daysSelected,
           enabled: true,
         });
         await AsyncStorage.setItem(
@@ -150,6 +166,7 @@ const EditAlarm = ({route, navigation}) => {
           hour: time.getHours(),
           minute: time.getMinutes(),
           sound: sound,
+          days: daysSelected,
         }),
       );
 
@@ -167,7 +184,8 @@ const EditAlarm = ({route, navigation}) => {
   };
 
   /**
-   * Deletes the current alarm from phone storage
+   * Deletes the current alarm from phone storage and returns to
+   * home page
    */
   const deleteAlarm = async () => {
     try {
@@ -221,6 +239,67 @@ const EditAlarm = ({route, navigation}) => {
         <Text style={styles.text}>{value}</Text>
         {shown && data.map(item => <DropdownItem value={item} key={item} />)}
       </TouchableOpacity>
+    );
+  };
+
+  /**
+   * Creates 'checkbox menu' for selecting days of the week
+   * Days selected are stored in daysSelected state
+   * @returns renders DaySelect menu
+   */
+  const DaySelect = () => {
+    const days = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+
+    /**
+     * Toggles day in daySelected state
+     * @param {Number} index index of day
+     */
+    const toggleDaySelected = index => {
+      setDaysSelected([
+        ...daysSelected.slice(0, index),
+        !daysSelected[index],
+        ...daysSelected.slice(index + 1),
+      ]);
+    };
+
+    return (
+      <View
+        style={{
+          marginTop: 20,
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        {days.map((day, index) => (
+          <TouchableOpacity
+            key={day}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 40,
+              backgroundColor: daysSelected[index]
+                ? colors[theme].fgColor
+                : colors[theme].bgColor,
+              borderColor: colors[theme].fgColor,
+              borderWidth: 2,
+              marginLeft: width / 80,
+              marginRight: width / 80,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => toggleDaySelected(index)}>
+            <Text
+              style={{
+                color: daysSelected[index]
+                  ? colors[theme].bgColor
+                  : colors[theme].fgColor,
+              }}>
+              {day}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     );
   };
 
@@ -280,6 +359,7 @@ const EditAlarm = ({route, navigation}) => {
               value={sound}
               setValue={setSound}
             />
+            <DaySelect />
           </View>
 
           <View style={{justifyContent: 'flex-end', marginBottom: 20}}>
