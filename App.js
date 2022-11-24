@@ -6,6 +6,7 @@ import Tabs from './components/Tabs';
 import Settings from './screens/Settings';
 import {AppContext} from './helper/AppContext';
 import EditAlarm from './screens/EditAlarm';
+import StandardDisable from './screens/StandardDisable';
 
 /**
  * Sets up navigation and renders the app
