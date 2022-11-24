@@ -6,6 +6,7 @@ import Tabs from './components/Tabs';
 import Settings from './screens/Settings';
 import {AppContext} from './helper/AppContext';
 import EditAlarm from './screens/EditAlarm';
+import MemoryDisable from './screens/MemoryDisable';
 
 /**
  * Sets up navigation and renders the app
@@ -18,7 +19,8 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{theme: theme, setTheme: setTheme}}>
-      <NavigationContainer>
+      <MemoryDisable/>
+      {/* <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="Tabs" component={Tabs} />
           <Stack.Screen name="Edit Alarm">
@@ -26,7 +28,7 @@ const App = () => {
           </Stack.Screen>
           <Stack.Screen name="Settings" component={Settings} />
         </Stack.Navigator>
-      </NavigationContainer>
+      </NavigationContainer> */}
     </AppContext.Provider>
   );
 };
