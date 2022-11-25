@@ -6,6 +6,8 @@ import Tabs from './components/Tabs';
 import Settings from './screens/Settings';
 import {AppContext} from './helper/AppContext';
 import EditAlarm from './screens/EditAlarm';
+import PageList from './screens/PageList';
+import MemoryDisable from './screens/MemoryDisable';
 
 /**
  * Sets up navigation and renders the app
@@ -25,6 +27,8 @@ const App = () => {
             {props => <EditAlarm {...props} />}
           </Stack.Screen>
           <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="Page List" component={PageList} />
+          <Stack.Screen name="Memory Game" component={MemoryDisable} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
