@@ -3,6 +3,8 @@ import React, {useContext} from 'react';
 import Container from '../components/Container';
 import {AppContext} from '../helper/AppContext';
 import Title from '../components/Title';
+import PageLink from '../components/PageLink';
+import PageList from './PageList';
 
 //renders switch for light mode / dark mode
 const Settings = () => {

@@ -4,18 +4,21 @@ import Container from '../components/Container';
 import Title from '../components/Title';
 import PageLink from '../components/PageLink';
 
-const Profile = ({navigation}) => {
+const PageList = ({navigation}) => {
   return (
     <Container
       children={
         <>
-          <Title text="Profile" />
-          <PageLink to="Settings" navigation={navigation} text="Settings" />
-          <PageLink text="Page List" to="Page List" navigation={navigation} />
+          <Title text="Page List (testing only)" />
+          <PageLink
+            to="Memory Game"
+            text="Memory Game"
+            navigation={navigation}
+          />
         </>
       }
     />
   );
 };
 
-export default Profile;
+export default PageList;
