@@ -7,6 +7,7 @@ import {
   NativeModules,
   Image,
   Animated,
+  Easing,
 } from 'react-native';
 import React, {useState, useContext, useEffect} from 'react';
 import Container from '../components/Container';
@@ -75,10 +76,49 @@ const EditAlarm = ({route, navigation}) => {
   const typeShakeAnimation = new Animated.Value(0);
   const soundShakeAnimation = new Animated.Value(0);
 
+  const typeSpinValue = new Animated.Value(0);
+  const soundSpinValue = new Animated.Value(0);
+
+  /**
+   * Begins rotation animation
+   * @param {Animation} animation animation object to animate
+   */
+  const startSpin = animation => {
+    Animated.sequence([
+      Animated.timing(animation, {
+        toValue: 1,
+        duration: 100,
+        easing: Easing.linear, // Easing is an additional import from react-native
+        useNativeDriver: true, // To make use of native driver for performance
+      }),
+      //Do nothing for a bit to prevent view reverting to initial state before we
+      //rerender
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 10000,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      animation.setValue(0);
+    });
+  };
+
+  // Interpolate beginning and end values for spin
+  const typeSpin = typeSpinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  const soundSpin = soundSpinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
   const animations = [typeShakeAnimation, soundShakeAnimation]; //time is a special case
 
   /**
-   * Function to start shake animation
+   * Begins shake animation for specified animation
+   * @param {Animation} animation animation object to animate
    */
   const startShake = animation => {
     Animated.sequence([
@@ -104,6 +144,14 @@ const EditAlarm = ({route, navigation}) => {
       }),
     ]).start();
   };
+
+  /**
+   * Does nothing for a given number of ms
+   * @param {Number} ms tme to wait
+   * @returns {Promise} waiting finished
+   */
+  const delay = async (ms = 1000) =>
+    new Promise(resolve => setTimeout(resolve, ms));
 
   //basic styling
   const styles = {
@@ -153,7 +201,6 @@ const EditAlarm = ({route, navigation}) => {
                 parseInt(current) > parseInt(max) ? current : max,
               )
             : -1;
-        console.log('max key', maxKey);
 
         //Save alarm
         const alarmJSON = JSON.stringify({
@@ -252,14 +299,26 @@ const EditAlarm = ({route, navigation}) => {
    * @param {Function} setValue setter function for useState value
    * @param {Boolean} shown state variable for showing dropdown
    * @param {Function} setShown setter function for shown
+   * @param {Animation} animation animation object for this picker
+   * @param {Animation.InterpolationConfigType} spin spin range for animation
    * @returns render for drop down picker
    */
-  const DropdownPicker = ({data, value, setValue, shown, setShown}) => {
+  const DropdownPicker = ({
+    data,
+    value,
+    setValue,
+    shown,
+    setShown,
+    animation,
+    spin,
+  }) => {
     /**
      * Creates a single item within drop down list. Clicking
      * on this component will set the passed in state variable to
      * the component value
      * @param {Text} value value of dropdown item
+     * @param {Number} index index of item in list
+     * @param {Boolean} selected is this the currently selected value
      * @returns render for a drop down item
      */
     const DropdownItem = ({value, index, selected}) => {
@@ -283,29 +342,38 @@ const EditAlarm = ({route, navigation}) => {
     return (
       <TouchableOpacity
         style={styles.container}
-        onPress={() => setShown(!shown)}>
+        onPress={async () => {
+          startSpin(animation);
+          await delay(100);
+          setShown(!shown);
+        }}>
         <View style={{flexDirection: 'row'}}>
           <Text style={{...styles.text, fontWeight: 'bold', flex: 1}}>
             {value}
           </Text>
-          <View
+          <Animated.View
             style={{
               alignSelf: 'flex-end',
               width: 20,
               height: 20,
               marginBottom: 15,
               marginRight: 20,
+
+              transform: [{rotate: spin}],
             }}>
             <Image
               source={
                 shown
-                  ? dropdownIcons[theme].crossIcon
-                  : dropdownIcons[theme].chevronIcon
+                  ? dropdownIcons[theme].chevronIconUp
+                  : dropdownIcons[theme].chevronIconDown
               }
-              style={{width: '100%', height: '100%'}}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
               resizeMode="contain"
             />
-          </View>
+          </Animated.View>
         </View>
         {shown &&
           data.map((item, index) => (
@@ -434,6 +502,8 @@ const EditAlarm = ({route, navigation}) => {
                 setShown={setShowTypes}
                 value={type}
                 setValue={setType}
+                animation={typeSpinValue}
+                spin={typeSpin}
               />
             </Animated.View>
             <Animated.View
@@ -444,6 +514,8 @@ const EditAlarm = ({route, navigation}) => {
                 setShown={setShowSounds}
                 value={sound}
                 setValue={setSound}
+                animation={soundSpinValue}
+                spin={soundSpin}
               />
             </Animated.View>
             <DaySelect />

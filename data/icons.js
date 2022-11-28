@@ -9,10 +9,10 @@ import homeIconSolid from '../assets/icons/home-solid.png';
 import plusIconSolid from '../assets/icons/plus-solid.png';
 import settingsIconSolid from '../assets/icons/settings-solid.png';
 import userIconSolid from '../assets/icons/user-solid.png';
-import chevronIconBlack from '../assets/icons/chevron-down-black.png';
-import crossIconBlack from '../assets/icons/cross-black.png';
-import chevronIconWhite from '../assets/icons/chevron-down-white.png';
-import crossIconWhite from '../assets/icons/cross-white.png';
+import chevronIconDownWhite from '../assets/icons/chevron-down-white.png';
+import chevronIconDownPurple from '../assets/icons/chevron-down-purple.png';
+import chevronIconUpWhite from '../assets/icons/chevron-up-white.png';
+import chevronIconUpPurple from '../assets/icons/chevron-up-purple.png';
 
 export const tabIcons = {
   homeIcon: homeIcon,
@@ -25,11 +25,11 @@ export const tabIcons = {
 
 export const dropdownIcons = {
   light: {
-    chevronIcon: chevronIconWhite,
-    crossIcon: crossIconWhite,
+    chevronIconDown: chevronIconDownWhite,
+    chevronIconUp: chevronIconUpWhite,
   },
   dark: {
-    chevronIcon: chevronIconBlack,
-    crossIcon: crossIconBlack,
+    chevronIconDown: chevronIconDownPurple,
+    chevronIconUp: chevronIconUpPurple,
   },
 };
