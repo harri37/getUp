@@ -13,6 +13,8 @@ import chevronIconDownWhite from '../assets/icons/chevron-down-white.png';
 import chevronIconDownPurple from '../assets/icons/chevron-down-purple.png';
 import chevronIconUpWhite from '../assets/icons/chevron-up-white.png';
 import chevronIconUpPurple from '../assets/icons/chevron-up-purple.png';
+import chevronIconRightWhite from '../assets/icons/chevron-right-white.png';
+import chevronIconRightPurple from '../assets/icons/chevron-right-purple.png';
 
 export const tabIcons = {
   homeIcon: homeIcon,
@@ -31,5 +33,14 @@ export const dropdownIcons = {
   dark: {
     chevronIconDown: chevronIconDownPurple,
     chevronIconUp: chevronIconUpPurple,
+  },
+};
+
+export const linkIcons = {
+  light: {
+    chevronRight: chevronIconRightWhite,
+  },
+  dark: {
+    chevronRight: chevronIconRightPurple,
   },
 };
