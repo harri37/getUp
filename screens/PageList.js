@@ -11,6 +11,11 @@ const PageList = ({navigation}) => {
         <>
           <Title text="Page List (testing only)" />
           <PageLink
+            to="Standard Disable"
+            text="Standard Disable"
+            navigation={navigation}
+          />
+          <PageLink
             to="Memory Game"
             text="Memory Game"
             navigation={navigation}

@@ -8,12 +8,6 @@ import {AppContext} from '../helper/AppContext';
 const StandardDisable = () => {
   const {theme} = useContext(AppContext);
 
-  const [myState, setMyState] = useState('hello');
-
-  useEffect(() => {
-    console.log('re render');
-  }, [myState]);
-
   const styles = {
     button: {
       backgroundColor: colors[theme].fgColor,
@@ -34,12 +28,11 @@ const StandardDisable = () => {
     <Container
       children={
         <>
-          <Title text={myState} />
+          <Title text="Standard" />
 
           <TouchableOpacity
             onPress={() => {
-              setMyState('hi');
-              //console.log('alarm snoozed');
+              console.log('alarm snoozed');
               //snooze alarm
             }}
             style={{
@@ -55,8 +48,7 @@ const StandardDisable = () => {
 
           <TouchableOpacity
             onPress={() => {
-              setMyState('bye');
-              //console.log('alarm stopped');
+              console.log('alarm stopped');
               //stop alarm
             }}
             style={styles.button}>

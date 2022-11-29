@@ -30,6 +30,7 @@ const App = () => {
           <Stack.Screen name="Settings" component={Settings} />
           <Stack.Screen name="Page List" component={PageList} />
           <Stack.Screen name="Memory Game" component={MemoryDisable} />
+          <Stack.Screen name="Standard Disable" component={StandardDisable} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
