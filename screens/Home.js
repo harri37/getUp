@@ -48,7 +48,12 @@ const Home = ({navigation}) => {
           JSON.parse(existingAlarm),
         );
 
-        setAlarms(existingAlarmsJSON);
+        //Sort alarms in time order asc
+        setAlarms(
+          existingAlarmsJSON.sort(
+            (a1, a2) => a1.hour * 60 + a1.minute - (a2.hour * 60 + a2.minute),
+          ),
+        );
         setLoading(false);
       } catch (e) {
         console.warn(e);
