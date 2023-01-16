@@ -20,6 +20,7 @@ const PageList = ({navigation}) => {
             text="Memory Game"
             navigation={navigation}
           />
+          <PageLink to="NFC" text="NFC" navigation={navigation} />
         </>
       }
     />

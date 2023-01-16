@@ -9,6 +9,7 @@ import EditAlarm from './screens/EditAlarm';
 import StandardDisable from './screens/StandardDisable';
 import PageList from './screens/PageList';
 import MemoryDisable from './screens/MemoryDisable';
+import NFC from './screens/NFC';
 
 /**
  * Sets up navigation and renders the app
@@ -16,7 +17,6 @@ import MemoryDisable from './screens/MemoryDisable';
  */
 const App = () => {
   const [theme, setTheme] = useState(useColorScheme());
-
   const Stack = createNativeStackNavigator();
 
   return (
@@ -31,6 +31,7 @@ const App = () => {
           <Stack.Screen name="Page List" component={PageList} />
           <Stack.Screen name="Memory Game" component={MemoryDisable} />
           <Stack.Screen name="Standard Disable" component={StandardDisable} />
+          <Stack.Screen name="NFC" component={NFC} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
